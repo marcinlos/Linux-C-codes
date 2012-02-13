@@ -1,9 +1,15 @@
 *.o
+*.a
+*.lib
 *.so
 *.exe
 *.dll
 *.jar
 *.war
 *.class
+*.zip
+*.rar
 *~
+log/
+*.log
 bin/

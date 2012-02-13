@@ -1,3 +1,8 @@
+/*
+    Illustration of basic directory reading functions. Given a list of
+    files/directories recursively list its contents, with owner and access
+    rights of this process.
+*/
 #include <sys/stat.h>
 #include <dirent.h>
 #include <stdio.h>
@@ -25,6 +30,7 @@ void examine(const char* path)
     }
     else
     {
+        /* Get owner name from /etc/passwd */
         struct passwd* pw = getpwuid(info.st_uid);
         printf("owner: %s, ", pw->pw_name);
         putchar('\n');
@@ -34,7 +40,7 @@ void examine(const char* path)
 
 void printPermission(mode_t mode)
 {
-    char* buffer = (char*) malloc(10 * sizeof(char));
+    char buffer[10];
     buffer[9] = 0;
     int i = 0;
     buffer[i ++] = S_IRUSR & mode ? 'r' : '-';
@@ -52,14 +58,14 @@ void printPermission(mode_t mode)
 void processDirectory(const char* path)
 {
     struct dirent* entry = 0;
-    char* buffer = (char*) malloc(PATH_LENGTH * sizeof(char));
+    char buffer[PATH_LENGTH];
     strncpy(buffer, path, PATH_LENGTH);
     char* ptr = buffer + strlen(path);
-    *(ptr ++) = '/';
     DIR* dir = opendir(path);
     
     while ((entry = readdir(dir)))
     {
+        /* Omit current/parent directory - infinite loop */
         if (strcmp(entry->d_name, ".") == 0 ||
             strcmp(entry->d_name, "..") == 0)
         {
@@ -67,13 +73,13 @@ void processDirectory(const char* path)
         }
         strcpy(ptr, entry->d_name);
         examine(buffer);
-        *ptr = '\0';
     }
     closedir(dir);
 }
 
 void printType(mode_t mode)
 {
+    /* Definitely not exhaustive, but whatever */
     char* type = 0;
     if (S_ISREG(mode))
     {
