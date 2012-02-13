@@ -1,0 +1,9 @@
+*.o
+*.so
+*.exe
+*.dll
+*.jar
+*.war
+*.class
+*~
+bin/
